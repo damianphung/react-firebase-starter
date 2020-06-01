@@ -62,8 +62,8 @@ passport.use(
     (req, accessToken, refreshToken, profile, cb) => {
       const credentials = { accessToken, refreshToken };
       upsertUser(profile, credentials)
-        .then((user) => cb(null, user))
-        .catch((err) => cb(err));
+        .then(user => cb(null, user))
+        .catch(err => cb(err));
     },
   ),
 );
@@ -74,6 +74,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
+      graphAPIVersion: 'v7.0',
       callbackURL: `${origin}/login/facebook/return`,
       profileFields: [
         'id',
@@ -95,8 +96,8 @@ passport.use(
     (req, accessToken, refreshToken, profile, cb) => {
       const credentials = { accessToken, refreshToken };
       upsertUser(profile, credentials)
-        .then((user) => cb(null, user))
-        .catch((err) => cb(err));
+        .then(user => cb(null, user))
+        .catch(err => cb(err));
     },
   ),
 );
@@ -108,9 +109,9 @@ passport.use(
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: `${origin}/login/facebooktoken/return`,
       passReqToCallback: true,
-      fbGraphVersion: 'v3.2',
+      fbGraphVersion: 'v7.0',
     },
-    function (accessToken, refreshToken, profile, done) {
+    function(accessToken, refreshToken, profile, done) {
       // alert('accessToken');
       console.log('Access token strategy - ' + accessToken);
       return done(null, accessToken);

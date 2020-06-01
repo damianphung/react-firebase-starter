@@ -57,7 +57,7 @@ function authenticate(provider) {
           .then(() => {
             send(null, user);
           })
-          .catch((err) => {
+          .catch(err => {
             send(err);
           });
       } else {
@@ -82,11 +82,11 @@ router.get(
 router.get(
   '/login/facebook-token',
   passport.authenticate('facebook-token'),
-  function (req, res) {
+  function(req, res) {
     // do something with req.user
-    alert('HELLO');
-    console.log('req = ' + req);
-    console.log('response = ' + res);
+    // alert('HELLO');
+    // console.log('req = ' + req);
+    // console.log('response = ' + res);
     res.send(200);
     // res.send(req.user ? 200 : 401);
   },
