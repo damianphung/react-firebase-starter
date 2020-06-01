@@ -75,7 +75,9 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       graphAPIVersion: 'v7.0',
-      callbackURL: `${origin}/login/facebook/return`,
+      // callbackURL: `${origin}/login/facebook/return`,
+      callbackURL:
+        'https://react-firebase-starter.onrender.com/login/facebook/return',
       profileFields: [
         'id',
         'cover',
