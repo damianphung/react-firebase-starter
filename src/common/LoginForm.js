@@ -12,9 +12,10 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import GoogleIcon from '../icons/Google';
 import FacebookIcon from '../icons/Facebook';
+import InstagramIcon from '../icons/Instagram';
 import { useAuth } from '../hooks/useAuth';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   button: {
     marginLeft: theme.spacing(0.5),
     marginRight: theme.spacing(0.5),
@@ -24,6 +25,7 @@ const useStyles = makeStyles(theme => ({
 const providers = [
   { id: 'google', name: 'Google', icon: GoogleIcon },
   { id: 'facebook', name: 'Facebook', icon: FacebookIcon },
+  { id: 'facebook-token', name: 'FacebookToken', icon: InstagramIcon },
 ];
 
 function LoginForm(props) {
@@ -33,7 +35,7 @@ function LoginForm(props) {
 
   function signIn(event) {
     const { provider } = event.currentTarget.dataset;
-    auth.signInWith(provider).then(user => {
+    auth.signInWith(provider).then((user) => {
       onLoginComplete(user);
     });
   }
@@ -44,14 +46,14 @@ function LoginForm(props) {
         Sign in or register with your social media account
       </Typography>
       <Typography paragraph align="center">
-        {providers.map(x => (
+        {providers.map((x) => (
           <Button
             key={x.id}
             className={s.button}
             variant="outlined"
             size="large"
             onClick={signIn}
-            data-provider={x.id}
+            data-provider={x.id} // This provides the provider
             title={`Continue with ${x.name}`}
           >
             {React.createElement(x.icon)}

@@ -9,9 +9,13 @@ import { toGlobalId } from 'graphql-relay';
 import passport from './passport';
 
 const router = new Router();
-
+//
 function authenticate(provider) {
   return (req, res, next) => {
+    console.log('authenticate...');
+    console.log('req... ', req);
+    console.log('res... ', res);
+    // console.log('next... ', next);
     function send(err, user) {
       const data = {
         type: 'LOGIN',
@@ -53,7 +57,7 @@ function authenticate(provider) {
           .then(() => {
             send(null, user);
           })
-          .catch(err => {
+          .catch((err) => {
             send(err);
           });
       } else {
@@ -75,8 +79,45 @@ router.get(
   }),
 );
 
+router.get(
+  '/login/facebook-token',
+  passport.authenticate('facebook-token'),
+  function (req, res) {
+    // do something with req.user
+    alert('HELLO');
+    console.log('req = ' + req);
+    console.log('response = ' + res);
+    res.send(200);
+    // res.send(req.user ? 200 : 401);
+  },
+);
+
+// router.get('/login/facebook-token', (req, res, next) => {
+//   passport.authenticate('facebook-token', (error, user, info) => {
+//     if (error || !user) {
+//       return res.status(401).json({
+//         error,
+//         info,
+//       });
+//     }
+
+//     if (req.sessionID && user) {
+//       req.logIn(user, () => {
+//         return res.json({
+//           // sessionId: cookieSignature.sign(req.sessionID, 12345),
+//           profile: user.profile,
+//         });
+//       });
+//     }
+
+//     next();
+//   })(req, res, next);
+// });
+
+//
 router.get('/login/google/return', authenticate('google'));
 router.get('/login/facebook/return', authenticate('facebook'));
+router.get('/login/facebook-token/return', authenticate('facebook-token'));
 
 router.post('/login/clear', (req, res) => {
   req.logOut();
