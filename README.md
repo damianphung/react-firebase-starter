@@ -177,6 +177,64 @@ repository, otherwise your project may differ too much from the base/upstream re
 Alternatively, you can use a folder diff tool like [Beyond Compare][bc] for keeping your project
 up to date with the base repository._
 
+### Notes
+This is not really use firestore for data storage, but rather postgres. 
+To get this working you will need to first create a postgres instance on cloudSQL.
+From google cloud platform menu
+- Select SQL
+- Create a postgres instance
+- Once created copy contents of "Connection name". This will be needed for PGHOST in .env file
+Optional but recommended.
+- Click on Connections tab and add your client machine IP to the list of Authorized networks. (client machine IP can be obtained from whatismyip.com
+- Configure SSL by creating server and client certificates.
+- modify .env.production AND .env files with paths to ssl certificates. See ./ssl/README.md
+
+Seed the postgres database 
+Modify .env file:
+PGHOST=<postgres public ip on google cloud>
+Your SSL files should have been configured from previous steps. 
+
+Now you need to configure permissions.
+
+Verify
+```bash
+psql "sslmode=verify-ca dbname=postgres user=postgres hostaddr=<postgres_ip_addr> sslrootcert=./ssl/prod.server-ca.pem sslcert=./ssl/prod.client-cert.pem sslkey=./ssl/prod.client-key.pem" -W
+
+#psql prompt -> \d 
+# Verify schema is seeded.
+```
+
+Modify ```src/server/index.js``` to read from a file containing the service key (json file)
+Do this by going to: 
+- API & Services -> Credentials.
+- Select firebase-adminsdk-xxxxx@projectid.iam.gserviceaccount.com
+- Create Key. Download it as a json file
+
+```bash
+var serviceAccount = require("../../serviceAccountKey.json");
+
+# From
+if (!firebase.apps.length) {
+
+  firebase.initializeApp({
+    credential: firebase.credential.cert(
+      // change this
+      // JSON.parse(process.env.GCP_SERVICE_KEY),
+      serviceAccount,
+    ),
+  });
+}
+```
+Configure Google and/or Facebook ID's so users can sign in.
+
+Now launch with firebase and seed DB. Make sure you have a firebase project already. Can create from firebase web console.
+- firebase login 
+- firebase use --add
+- yarn setup
+- yarn build
+- yarn deploy-prod
+
+
 ### How to Contribute
 
 Anyone and everyone is welcome to [contribute](https://github.com/kriasoft/react-firebase-starter/wiki/Contributing) to this project. The best way to
