@@ -10,6 +10,16 @@ import Avatar from '@material-ui/core/Avatar';
 import MuiAppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 
+//
+import { useState } from 'react';
+import { useMediaQuery } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
+import { Badge, Hidden } from '@material-ui/core';
+
+import MenuIcon from '@material-ui/icons/Menu';                                                                                                                                               
+import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';                                                                                                                     
+import InputIcon from '@material-ui/icons/Input';  
+
 import Drawer from '@material-ui/core/Drawer';
 import {
   Divider,
@@ -54,10 +64,19 @@ const useStyles = makeStyles(theme => ({
     height: 32,
   },
 
+// TODO: refactor and seperate Appbar and Drawer UI components
+// Topbar
+  flexGrow: {                                                                                                                                                                                 
+    flexGrow: 1                                                                                                                                                                               
+  },                                                                                                                                                                                          
+  signOutButton: {                                                                                                                                                                            
+    marginLeft: theme.spacing(1)                                                                                                                                                              
+  },    
+
   // MUI
   paper: {
     //background: "blue",
-//    backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
+  //  backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
   },
   listSubheader: {
     color: theme.palette.text.secondary
@@ -119,6 +138,20 @@ function AppBar(props) {
   const history = useHistory();
   const auth = useAuth();
   const s = useStyles();
+  
+  // MUI
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), { defaultmatches : true });
+  const [openSidebar, setOpenSidebar] = useState(false);
+  const handleSidebarOpen = () => {
+    setOpenSidebar(true);
+  };
+  const handleSidebarClose = () => {
+    setOpenSidebar(false);
+  }
+  const shouldOpenSidebar = isDesktop ? true : openSidebar;
+  const [notifications] = useState([]);
+  //
 
   function handleClose() {
     history.replace('/');
@@ -138,10 +171,47 @@ function AppBar(props) {
   }
 
   return (
-    {/*<MuiAppBar className={clsx(s.root, className)} elevation={0} {...other}>*/},
-    <Drawer className={clsx(s.paper, className)} anchor="left" {...other} open={true}>
+    <div>
+    <MuiAppBar className={clsx(s.root, className)} elevation={0} {...other}>
+      <Toolbar>
+      <div className={clsx(s.flexGrow)} />
+        <Hidden mdDown>
+          <IconButton color="inherit">
+            <Badge                                                                                                                                                                            
+                badgeContent={notifications.length} 
+                color="primary"    
+                variant="dot"
+            >
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+          <IconButton                                                                                                                                                                         
+                    className={s.signOutButton}                                                                                                                                                 
+                    color="inherit"                                                                                                                                                                   
+                  >
+            <InputIcon />
+          </IconButton>
+        </Hidden>
+        <Hidden lgUp>
+          <IconButton                                                                                                                                                                         
+                    color="inherit"                                                                                                                                                                   
+                    onClick={handleSidebarOpen}                                                                                                                                                           
+                  >
+            <MenuIcon />
+          </IconButton>
+        </Hidden> 
+      </Toolbar>
+    </MuiAppBar>
+    
+    <Drawer 
+      className={clsx(s.paper, className)} 
+      anchor="left" {...other} 
+      open={shouldOpenSidebar}
+      onClose={handleSidebarClose}
+      variant={isDesktop ? 'persistent' : 'temporary'}
+    >
       <List component="div" disablePadding >
-      <ListItem  className={clsx(s.activeListItem, className)} > 
+      <ListItem  className={clsx(s.listItem, className)} > 
         <Typography className={s.title} variant="h1">
           <Link className={s.titleLink} href="/">
             {app.name}
@@ -197,7 +267,8 @@ function AppBar(props) {
         )}
     </List>
     </Drawer>
-//    {/*</MuiAppBar>*/}
+    </div>
+    
   );
 }
 

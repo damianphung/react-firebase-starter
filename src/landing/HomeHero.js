@@ -24,14 +24,14 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '1rem',
     fontWeight: 300,
     fontSize: '1.75rem',
-    color: theme.palette.common.white,
+    color: theme.palette.common.black,
     [theme.breakpoints.up('sm')]: {
       fontSize: '2.5rem',
     },
   },
   subTitle: {
     paddingBottom: '1rem',
-    color: theme.palette.common.white,
+    color: theme.palette.common.black,
     fontWeight: 300,
     fontSize: '1.125rem',
     [theme.breakpoints.up('sm')]: {
