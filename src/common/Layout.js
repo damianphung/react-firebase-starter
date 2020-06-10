@@ -15,8 +15,8 @@ import UserSettingsDialog from './UserSettingsDialog';
 
 const useStyles = makeStyles(theme => ({
   background: {
-    backgroundColor: '#3f51b5',
-    backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
+  //  backgroundColor: '#3f51b5',
+  //  backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
   },
   toolbar: {
     ...theme.mixins.toolbar,

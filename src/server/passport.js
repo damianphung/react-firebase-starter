@@ -17,38 +17,38 @@ import { upsertUser } from './utils';
 const origin =
   process.env.NODE_ENV === 'production' ? `${process.env.APP_ORIGIN}` : '';
 
-// passport.framework(
-//   jwt({
-//     name: process.env.JWT_NAME,
-//     secret: process.env.JWT_SECRET,
-//     issuer: origin,
-//     expiresIn: '1y',
-//     cookie: {
-//       maxAge: 31536000000 /* 1 year */,
-//     },
-//     createToken: req => ({
-//       sub: req.user.id,
-//       jti: uuid.v4(),
-//     }),
-//     saveToken: token =>
-//       db.table('user_tokens').insert({
-//         user_id: token.sub,
-//         token_id: token.jti,
-//       }),
-//     deleteToken: token =>
-//       db
-//         .table('user_tokens')
-//         .where({ token_id: token.jti })
-//         .del(),
-//     findUser: token =>
-//       db
-//         .table('user_tokens')
-//         .leftJoin('users', 'users.id', 'user_tokens.user_id')
-//         .where({ 'user_tokens.token_id': token.jti })
-//         .select('users.*')
-//         .first(),
-//   }),
-// );
+passport.framework(
+  jwt({
+    name: process.env.JWT_NAME,
+    secret: process.env.JWT_SECRET,
+    issuer: origin,
+    expiresIn: '1y',
+    cookie: {
+      maxAge: 31536000000 /* 1 year */,
+    },
+    createToken: req => ({
+      sub: req.user.id,
+      jti: uuid.v4(),
+    }),
+    saveToken: token =>
+      db.table('user_tokens').insert({
+        user_id: token.sub,
+        token_id: token.jti,
+      }),
+    deleteToken: token =>
+      db
+        .table('user_tokens')
+        .where({ token_id: token.jti })
+        .del(),
+    findUser: token =>
+      db
+        .table('user_tokens')
+        .leftJoin('users', 'users.id', 'user_tokens.user_id')
+        .where({ 'user_tokens.token_id': token.jti })
+        .select('users.*')
+        .first(),
+  }),
+);
 
 // https://github.com/jaredhanson/passport-google-oauth2
 passport.use(
@@ -56,7 +56,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `${origin}/login/google/return`,
+      callbackURL: `${process.env.APP_ORIGIN}/login/google/return`,
       passReqToCallback: true,
     },
     (req, accessToken, refreshToken, profile, cb) => {
@@ -75,9 +75,8 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       graphAPIVersion: 'v7.0',
-      // callbackURL: `${origin}/login/facebook/return`,
-      callbackURL:
-        'https://react-firebase-starter.onrender.com/login/facebook/return',
+      //callbackURL: `${process.env.APP_ORIGIN}/login/facebook/return`,
+      callbackURL: `${process.env.APP_ORIGIN}/auth/callback`,
       profileFields: [
         'id',
         'cover',

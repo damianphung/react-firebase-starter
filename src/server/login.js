@@ -75,7 +75,8 @@ router.get(
 router.get(
   '/login/facebook',
   passport.authenticate('facebook', {
-    scope: ['public_profile', 'email'],
+    //scope: ['public_profile', 'email'],
+    scope: ['pages_messaging','pages_manage_metadata','pages_show_list','pages_manage_posts'],
   }),
 );
 
