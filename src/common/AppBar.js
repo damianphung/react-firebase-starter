@@ -9,26 +9,15 @@ import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import MuiAppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-
-//
 import { useState } from 'react';
-import { useMediaQuery } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
+//
 import { Badge, Hidden } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';                                                                                                                                               
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';                                                                                                                     
 import InputIcon from '@material-ui/icons/Input';  
 
-import Drawer from '@material-ui/core/Drawer';
-import {
-  Divider,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListSubheader,
-} from '@material-ui/core';
+//
 
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -62,65 +51,7 @@ const useStyles = makeStyles(theme => ({
   avatar: {
     width: 32,
     height: 32,
-  },
-
-// TODO: refactor and seperate Appbar and Drawer UI components
-// Topbar
-  flexGrow: {                                                                                                                                                                                 
-    flexGrow: 1                                                                                                                                                                               
-  },                                                                                                                                                                                          
-  signOutButton: {                                                                                                                                                                            
-    marginLeft: theme.spacing(1)                                                                                                                                                              
-  },    
-
-  // MUI
-  paper: {
-    //background: "blue",
-  //  backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
-  },
-  listSubheader: {
-    color: theme.palette.text.secondary
-  },
-  listItem: {
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light,
-      borderLeft: `4px solid ${theme.palette.primary.main}`,
-      borderRadius: '4px',
-      '& $listItemIcon': {
-        color: theme.palette.primary.main,
-        marginLeft: '-4px'
-      }
-    },
-    '& + &': {
-      marginTop: theme.spacing.unit
-    }
-  },
-  activeListItem: {
-    borderLeft: `4px solid ${theme.palette.primary.main}`,
-    borderRadius: '4px',
-    backgroundColor: theme.palette.primary.light,
-    '& $listItemText': {
-      color: theme.palette.text.primary
-    },
-    '& $listItemIcon': {
-      color: theme.palette.primary.main,
-      marginLeft: '-4px'
-    }
-  },
-  listItemIcon: {
-    marginRight: 0
-  },
-  listItemText: {
-    fontWeight: 500,
-    color: theme.palette.text.secondary
-  },
-  listDivider: {
-    marginBottom: theme.spacing.unit * 2,
-    marginTop: theme.spacing.unit * 2
   }
-
-
 }));
 
 function AppBar(props) {
@@ -139,19 +70,18 @@ function AppBar(props) {
   const auth = useAuth();
   const s = useStyles();
   
-  // MUI
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), { defaultmatches : true });
-  const [openSidebar, setOpenSidebar] = useState(false);
+  // MUI start
+  // const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), { defaultmatches : true });
+  //   const [openSidebar, setOpenSidebar] = useState(false);
+  const [setOpenSidebar] = useState(false);
+  // const shouldOpenSidebar = isDesktop ? true : openSidebar;
+
   const handleSidebarOpen = () => {
     setOpenSidebar(true);
   };
-  const handleSidebarClose = () => {
-    setOpenSidebar(false);
-  }
-  const shouldOpenSidebar = isDesktop ? true : openSidebar;
+  
   const [notifications] = useState([]);
-  //
+  // end
 
   function handleClose() {
     history.replace('/');
@@ -169,12 +99,11 @@ function AppBar(props) {
     closeUserMenu();
     auth.signIn();
   }
-
   return (
-    <div>
     <MuiAppBar className={clsx(s.root, className)} elevation={0} {...other}>
       <Toolbar>
-      <div className={clsx(s.flexGrow)} />
+
+
         <Hidden mdDown>
           <IconButton color="inherit">
             <Badge                                                                                                                                                                            
@@ -193,44 +122,27 @@ function AppBar(props) {
           </IconButton>
         </Hidden>
         <Hidden lgUp>
-          <IconButton                                                                                                                                                                         
-                    color="inherit"                                                                                                                                                                   
-                    onClick={handleSidebarOpen}                                                                                                                                                           
-                  >
+          <IconButton color="inherit" onClick={handleSidebarOpen}>
             <MenuIcon />
           </IconButton>
         </Hidden> 
-      </Toolbar>
-    </MuiAppBar>
-    
-    <Drawer 
-      className={clsx(s.paper, className)} 
-      anchor="left" {...other} 
-      open={shouldOpenSidebar}
-      onClose={handleSidebarClose}
-      variant={isDesktop ? 'persistent' : 'temporary'}
-    >
-      <List component="div" disablePadding >
-      <ListItem  className={clsx(s.listItem, className)} > 
+
+
         <Typography className={s.title} variant="h1">
           <Link className={s.titleLink} href="/">
             {app.name}
           </Link>
         </Typography>
-      </ListItem>
         <span style={{ flexGrow: 1 }} />
         {close ? (
           <IconButton onClick={handleClose} color="inherit">
             <CloseIcon />
           </IconButton>
         ) : (
-
           <React.Fragment>
-    <ListItem  className={clsx(s.listItem, className)} > 
             <Button color="inherit" component={Link} href="/news">
               News
             </Button>
-    </ListItem>
             {children}
             {me && (
               <IconButton
@@ -257,18 +169,14 @@ function AppBar(props) {
               />
             )}
             {!me && (
-    <ListItem  className={clsx(s.listItem, className)} >
               <Button className={s.button} color="inherit" onClick={signIn}>
                 Log In / Sign Up
               </Button>
-    </ListItem>
             )}
           </React.Fragment>
         )}
-    </List>
-    </Drawer>
-    </div>
-    
+      </Toolbar>
+    </MuiAppBar> 
   );
 }
 
