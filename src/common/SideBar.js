@@ -16,7 +16,7 @@ import { Badge, Hidden } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';                                                                                                                                               
 import InputIcon from '@material-ui/icons/Input';  
 
-
+import Link from './Link';
 import { makeStyles } from '@material-ui/core/styles';
 import { createFragmentContainer, graphql } from 'react-relay';
 import { useConfig, useHistory, useAuth } from '../hooks';
@@ -46,6 +46,11 @@ const useStyles = makeStyles(theme => ({
   divider: {
     margin: theme.spacing(2, 0)
   },
+  item: {
+    display: 'flex',
+    paddingTop: 0,
+    paddingBottom: 0
+  },  
   //
   avatarRoot: {
     display: 'flex',
@@ -130,9 +135,10 @@ function SideBar(props) {
                     <Typography>
                     {me.displayName}
                     </Typography>
+                    <Divider className={s.divider} />
                   </div> 
                 )}
-                <Divider className={s.divider} />
+                
                 <List className={clsx(s.root, className)} disablePadding >
                   <ListItem  className={clsx(s.listItem, className)} >                   
                   {!me && (
@@ -140,7 +146,18 @@ function SideBar(props) {
                       Log In / Sign Up
                     </Button>
                   )}                
-                  </ListItem>               
+                  </ListItem> 
+                  <ListItem  className={clsx(s.listItem, className)} >        
+                    <Button color="inherit" component={Link} href="/news">
+                      News
+                    </Button>
+                  </ListItem> 
+                  <ListItem  className={clsx(s.listItem, className)} > 
+
+                  <Button color="inherit" component={Link} href="/about">
+                    About
+                  </Button> 
+                  </ListItem>                  
             </List>
         </Drawer>
     );
