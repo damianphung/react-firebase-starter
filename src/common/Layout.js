@@ -4,11 +4,18 @@
  * Copyright (c) 2015-present Kriasoft | MIT License
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+// new
+import { useMediaQuery } from '@material-ui/core';
+import { useTheme } from '@material-ui/styles';
+//
+
 import { createFragmentContainer, graphql } from 'react-relay';
 
 import AppBar from './AppBar';
+import SideBar from './SideBar';
+
 import LayoutFooter from './LayoutFooter';
 import AutoUpdater from './AutoUpdater';
 import UserSettingsDialog from './UserSettingsDialog';
@@ -28,6 +35,25 @@ function Layout(props) {
   const [userSettings, setUserSettings] = React.useState({ open: false });
   const s = useStyles();
 
+// new
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), {
+    defaultMatches: true
+  });
+
+  const [openSidebar, setOpenSidebar] = useState(false);
+
+  const handleSidebarOpen = () => {
+    setOpenSidebar(true);
+  };
+
+  const handleSidebarClose = () => {
+    setOpenSidebar(false);
+  };
+
+  const shouldOpenSidebar = isDesktop ? true : openSidebar;
+//
+
   function openUserSettings() {
     setUserSettings({ open: true, key: Date.now() });
   }
@@ -42,7 +68,15 @@ function Layout(props) {
         me={data.me}
         {...(!hero && { className: s.background })}
         onOpenSettings={openUserSettings}
+        onSidebarOpen={handleSidebarOpen}
       />
+      <SideBar
+        me={data.me}
+        onOpenSettings={openUserSettings}
+        onClose={handleSidebarClose}
+        open={shouldOpenSidebar}
+        variant={isDesktop ? 'persistent' : 'temporary'}
+      />            
       {hero && (
         <div className={s.background}>
           <div className={s.toolbar} />
@@ -51,6 +85,7 @@ function Layout(props) {
       )}
       {!hero && <div className={s.toolbar} />}
       {children}
+
       <LayoutFooter />
       <AutoUpdater me={data.me} />
       <UserSettingsDialog
@@ -68,6 +103,7 @@ export default createFragmentContainer(Layout, {
     fragment Layout_data on Query {
       me {
         ...AppBar_me
+        ...SideBar_me
         ...AutoUpdater_me
         ...UserSettingsDialog_me
       }

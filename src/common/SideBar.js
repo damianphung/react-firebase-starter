@@ -4,14 +4,22 @@
 
 import clsx from 'clsx';
 import React from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import { Typography } from '@material-ui/core';
 import { useState } from 'react';
 import { useMediaQuery } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 import { Badge, Hidden } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';                                                                                                                                               
-import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';                                                                                                                     
 import InputIcon from '@material-ui/icons/Input';  
+
+
+import { makeStyles } from '@material-ui/core/styles';
+import { createFragmentContainer, graphql } from 'react-relay';
+import { useConfig, useHistory, useAuth } from '../hooks';
 
 import Drawer from '@material-ui/core/Drawer';
 import {
@@ -24,86 +32,36 @@ import {
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-    root: {
-    //  backgroundColor: '#3f51b5',
-    //  backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
-    },
-    title: {
-      fontFamily: theme.typography.monoFamily,
-      fontWeight: 300,
-      fontSize: '1.25rem',
-    },
-    titleLink: {
-      color: 'inherit',
-      textDecoration: 'none',
-    },
-    avatarButton: {
-      padding: theme.spacing(0.5),
-      marginLeft: theme.spacing(1),
-    },
-    avatar: {
-      width: 32,
-      height: 32,
-    },
-  
-  // TODO: refactor and seperate Appbar and Drawer UI components
-  // Topbar
-    flexGrow: {                                                                                                                                                                                 
-      flexGrow: 1                                                                                                                                                                               
-    },                                                                                                                                                                                          
-    signOutButton: {                                                                                                                                                                            
-      marginLeft: theme.spacing(1)                                                                                                                                                              
-    },    
-  
-    // MUI
-    paper: {
-      //background: "blue",
-    //  backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
-    },
-    listSubheader: {
-      color: theme.palette.text.secondary
-    },
-    listItem: {
-      cursor: 'pointer',
-      '&:hover': {
-        backgroundColor: theme.palette.primary.light,
-        borderLeft: `4px solid ${theme.palette.primary.main}`,
-        borderRadius: '4px',
-        '& $listItemIcon': {
-          color: theme.palette.primary.main,
-          marginLeft: '-4px'
-        }
-      },
-      '& + &': {
-        marginTop: theme.spacing.unit
-      }
-    },
-    activeListItem: {
-      borderLeft: `4px solid ${theme.palette.primary.main}`,
-      borderRadius: '4px',
-      backgroundColor: theme.palette.primary.light,
-      '& $listItemText': {
-        color: theme.palette.text.primary
-      },
-      '& $listItemIcon': {
-        color: theme.palette.primary.main,
-        marginLeft: '-4px'
-      }
-    },
-    listItemIcon: {
-      marginRight: 0
-    },
-    listItemText: {
-      fontWeight: 500,
-      color: theme.palette.text.secondary
-    },
-    listDivider: {
-      marginBottom: theme.spacing.unit * 2,
-      marginTop: theme.spacing.unit * 2
+  drawer: {
+    width: 240,
+    [theme.breakpoints.up('lg')]: {
+      marginTop: 64,
+      height: 'calc(100% - 64px)'
     }
-  
-  
-  }));
+  },  
+  root: {
+  //  backgroundColor: '#3f51b5',
+  //  backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
+  },
+  divider: {
+    margin: theme.spacing(2, 0)
+  },
+  //
+  avatarRoot: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    minHeight: 'fit-content'
+  },
+  avatarButton: {
+    padding: theme.spacing(0.5),
+    marginLeft: theme.spacing(1),
+  },
+  avatar: {
+    width: 60,
+    height: 60
+  }
+}));
 
 
 function SideBar(props) {
@@ -114,6 +72,9 @@ function SideBar(props) {
       close,
       children,
       onOpenSettings,
+      open,
+      variant,
+      onClose,
       ...other
     } = props;
     const [userMenuEl, setUserMenuEl] = React.useState(null);
@@ -122,20 +83,7 @@ function SideBar(props) {
     const auth = useAuth();
     const s = useStyles();
     
-    // MUI
-    const theme = useTheme();
-    const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), { defaultmatches : true });
-    const [openSidebar, setOpenSidebar] = useState(false);
-    const handleSidebarOpen = () => {
-      setOpenSidebar(true);
-    };
-    const handleSidebarClose = () => {
-      setOpenSidebar(false);
-    }
-    const shouldOpenSidebar = isDesktop ? true : openSidebar;
-    const [notifications] = useState([]);
-    //
-  
+
     function handleClose() {
       history.replace('/');
     }
@@ -152,18 +100,63 @@ function SideBar(props) {
       closeUserMenu();
       auth.signIn();
     }
-  
+  //          className={clsx(s.root, className)} 
     return (
         <Drawer 
-        className={clsx(s.paper, className)} 
-        anchor="left" {...other} 
-        open={shouldOpenSidebar}
-        onClose={handleSidebarClose}
-        variant={isDesktop ? 'persistent' : 'temporary'} >        
-            <List component="div" disablePadding >
-                <ListItem  className={clsx(s.listItem, className)} > 
-                </ListItem>
+
+          classes={{ paper: s.drawer }}
+          anchor="left" {...other} 
+          open={open}
+          onClose={onClose}
+          variant={variant} >        
+                {me && (
+                  <div className={clsx(s.avatarRoot, className)}>
+                    <IconButton
+                      className={s.avatarButton}
+                      onClick={openUserMenu}
+                      aria-owns={userMenuEl ? 'user-menu' : null}
+                      aria-haspopup="true"
+                    >
+                      <Avatar
+                        className={s.avatar}
+                        src={me.photoURL}
+                        alt={me.displayName}
+                      />
+                      
+                    </IconButton>
+                    <Typography>
+                      Welcome
+                    </Typography>
+                    <Typography>
+                    {me.displayName}
+                    </Typography>
+                  </div> 
+                )}
+                <Divider className={s.divider} />
+                <List className={clsx(s.root, className)} disablePadding >
+                  <ListItem  className={clsx(s.listItem, className)} >                   
+                  {!me && (
+                    <Button className={s.button} color="inherit" onClick={signIn}>
+                      Log In / Sign Up
+                    </Button>
+                  )}                
+                  </ListItem>               
             </List>
         </Drawer>
     );
 }
+
+
+// export default SideBar;
+export default createFragmentContainer(SideBar, {
+  me: graphql`
+    fragment SideBar_me on User {
+      id
+      photoURL
+      displayName
+    }
+  `,
+});
+
+
+

@@ -12,12 +12,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { useState } from 'react';
 //
 import { Badge, Hidden } from '@material-ui/core';
-
 import MenuIcon from '@material-ui/icons/Menu';                                                                                                                                               
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';                                                                                                                     
-import InputIcon from '@material-ui/icons/Input';  
-
-//
 
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -62,6 +58,7 @@ function AppBar(props) {
     close,
     children,
     onOpenSettings,
+    onSidebarOpen,
     ...other
   } = props;
   const [userMenuEl, setUserMenuEl] = React.useState(null);
@@ -71,15 +68,7 @@ function AppBar(props) {
   const s = useStyles();
   
   // MUI start
-  // const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), { defaultmatches : true });
-  //   const [openSidebar, setOpenSidebar] = useState(false);
-  const [setOpenSidebar] = useState(false);
-  // const shouldOpenSidebar = isDesktop ? true : openSidebar;
-
-  const handleSidebarOpen = () => {
-    setOpenSidebar(true);
-  };
-  
+ 
   const [notifications] = useState([]);
   // end
 
@@ -102,32 +91,6 @@ function AppBar(props) {
   return (
     <MuiAppBar className={clsx(s.root, className)} elevation={0} {...other}>
       <Toolbar>
-
-
-        <Hidden mdDown>
-          <IconButton color="inherit">
-            <Badge                                                                                                                                                                            
-                badgeContent={notifications.length} 
-                color="primary"    
-                variant="dot"
-            >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton                                                                                                                                                                         
-                    className={s.signOutButton}                                                                                                                                                 
-                    color="inherit"                                                                                                                                                                   
-                  >
-            <InputIcon />
-          </IconButton>
-        </Hidden>
-        <Hidden lgUp>
-          <IconButton color="inherit" onClick={handleSidebarOpen}>
-            <MenuIcon />
-          </IconButton>
-        </Hidden> 
-
-
         <Typography className={s.title} variant="h1">
           <Link className={s.titleLink} href="/">
             {app.name}
@@ -143,6 +106,24 @@ function AppBar(props) {
             <Button color="inherit" component={Link} href="/news">
               News
             </Button>
+
+            <Hidden mdDown>
+              <IconButton color="inherit">
+                <Badge                                                                                                                                                                            
+                    badgeContent={notifications.length} 
+                    color="primary"    
+                    variant="dot"
+                >
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Hidden>  
+            <Hidden lgUp>
+              <IconButton color="inherit" onClick={onSidebarOpen}>
+                <MenuIcon />
+              </IconButton>
+            </Hidden>
+
             {children}
             {me && (
               <IconButton
