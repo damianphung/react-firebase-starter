@@ -10,7 +10,7 @@ const dotenv = require('dotenv');
 const { env = 'dev' } = require('minimist')(process.argv.slice(2));
 
 function getProjectID(env) {
-  return `example-${env}`;
+  return `firebase-postgres-starter-${env}`;
 }
 
 // Load API keys, secrets etc. from Firebase environment

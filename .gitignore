@@ -23,8 +23,13 @@ firebase-error.log*
 !.vscode/launch.json
 !.vscode/settings.json
 
+public/*
+.env
+.env.production
+.env.test
 # Misc
 .firebase/*
+ssl/*
 __generated__
 .DS_Store
 .env.local

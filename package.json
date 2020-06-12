@@ -44,8 +44,8 @@
     "moment-timezone": "^0.5.27",
     "passport": "^0.4.1",
     "passport-facebook": "^3.0.0",
-    "passport-google-oauth20": "^2.0.0",
     "passport-facebook-token": "^3.3.0",
+    "passport-google-oauth20": "^2.0.0",
     "pg": "^7.17.0",
     "prop-types": "^15.7.2",
     "query-string": "^6.9.0",
@@ -63,6 +63,7 @@
     "validator": "^12.1.0"
   },
   "devDependencies": {
+    "serve": "^11.3.2",
     "@babel/core": "^7.7.7",
     "@babel/register": "^7.7.7",
     "babel-plugin-lodash": "^3.3.4",
@@ -89,7 +90,6 @@
       "git add --force"
     ]
   },
-  
   "scripts": {
     "setup": "node ./scripts/setup",
     "update-schema": "node ./scripts/update-schema",
@@ -115,6 +115,6 @@
     "psql": "node ./scripts/psql",
     "deploy": "yarn run deploy-test",
     "deploy-test": "node ./scripts/pre-deploy --env=test && firebase --project=example-test deploy && node ./scripts/post-deploy --env=test",
-    "deploy-prod": "node ./scripts/pre-deploy --env=prod && firebase --project=example-prod deploy && node ./scripts/post-deploy --env=prod"
+    "deploy-prod": "node ./scripts/pre-deploy --env=prod && firebase --project=firebase-postgres-starter deploy && node ./scripts/post-deploy --env=prod"
   }
 }

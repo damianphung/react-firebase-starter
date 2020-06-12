@@ -75,8 +75,7 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       graphAPIVersion: 'v7.0',
-      //callbackURL: `${process.env.APP_ORIGIN}/login/facebook/return`,
-      callbackURL: `${process.env.APP_ORIGIN}/auth/callback`,
+      callbackURL: `${process.env.APP_ORIGIN}/login/facebook/return`,
       profileFields: [
         'id',
         'cover',
