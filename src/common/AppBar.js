@@ -28,8 +28,8 @@ import { useConfig, useHistory, useAuth } from '../hooks';
 
 const useStyles = makeStyles(theme => ({
   root: {
-  //  backgroundColor: '#3f51b5',
-  //  backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
+   backgroundColor: '#3f51b5',
+   backgroundImage: 'linear-gradient(-225deg, #3db0ef, #5e5bb7)',
   },
   title: {
     fontFamily: theme.typography.monoFamily,
