@@ -37,16 +37,17 @@ if (!firebase.apps.length) {
     ),
   });
 }
+/*
 if (process.env.NODE_ENV === 'production') {
   // Server environment
   exports.app = functions
     .runWith({ memory: '2GB' })
     .https.onRequest(require('./app').default);
-} else {
-    // Local/dev environment
-  const app = express();
-  const db = require('./db').default;
-  app.use(require('./app').default);
-  module.exports.default = app;
-  module.exports.dispose = () => db.destroy();
-}
+/} else { */
+// Local/dev environment
+const app = express();
+const db = require('./db').default;
+app.use(require('./app').default);
+module.exports.default = app;
+module.exports.dispose = () => db.destroy();
+//}
