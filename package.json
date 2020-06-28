@@ -61,6 +61,7 @@
     "universal-router": "^8.3.0",
     "uuid": "^3.3.3",
     "validator": "^12.1.0",
+    "serve": "^11.3.2",
     "@babel/core": "^7.7.7",
     "@babel/register": "^7.7.7",
     "babel-plugin-lodash": "^3.3.4",
