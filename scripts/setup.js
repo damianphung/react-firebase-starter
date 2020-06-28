@@ -14,6 +14,8 @@ let status;
   ({ status } = cp.spawnSync('yarn', ['install'], { stdio: 'inherit' }));
   if (status !== 0) process.exit(status);
 
+  // Pre-compile GraphQL queries
+
   const knex = require('knex');
   const config = require('../knexfile');
 
