@@ -38,13 +38,17 @@ if (!firebase.apps.length) {
   });
 }
 
+// USE firebase cloud functions 
 if (process.env.NODE_ENV === 'production') {
   // Server environment
+    // this is where we define function called 'app' via exports.app = functions()
+    // define it as the app.js file we have which is a Router object from express;
   exports.app = functions
     .runWith({ memory: '2GB' })
     .https.onRequest(require('./app').default);
 } else {
   // Local/dev environment
+// IF DEV ENVIRONMENT - USE NODE
   const app = express();
   const db = require('./db').default;
   app.use(require('./app').default);

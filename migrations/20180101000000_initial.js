@@ -39,6 +39,17 @@ exports.up = async db => {
     table.primary(['provider', 'provider_id']);
   });
 
+  await db.schema.createTable('facebook_page_information', table => {
+    table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
+    table.string('page_id', 120).notNullable();
+    table.jsonb('credentials').notNullable();
+    // other info about page
+    // table.xx(page_name);
+      // timestamp may be useful for managing session renewals
+    // table.timestamps(false, true);
+    table.primary(['user_id', 'page_id']);
+  });
+
   await db.schema.createTable('stories', table => {
     table.uuid('id').notNullable().defaultTo(db.raw('uuid_generate_v4()')).primary();
     table.uuid('author_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');

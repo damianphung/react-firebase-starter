@@ -10,3 +10,4 @@ export * from './type';
 export * from './fields';
 export * from './username';
 export * from './user';
+export * from './socialpage';

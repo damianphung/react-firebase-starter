@@ -9,10 +9,10 @@ import passport from 'passport';
 import jwt from 'jwt-passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-// import { Strategy as FacebookTokenStrategy } from 'passport-facebook-token';
 
 import db from './db';
-import { upsertUser } from './utils';
+import { upsertUser, upsertPage } from './utils';
+import axios from 'axios'
 
 const origin =
   process.env.NODE_ENV === 'production' ? `${process.env.APP_ORIGIN}` : '';
@@ -67,7 +67,6 @@ passport.use(
     },
   ),
 );
-var FacebookTokenStrategy = require('passport-facebook-token');
 // https://github.com/jaredhanson/passport-facebook
 passport.use(
   new FacebookStrategy(
@@ -94,29 +93,55 @@ passport.use(
       passReqToCallback: true,
     },
     (req, accessToken, refreshToken, profile, cb) => {
-      const credentials = { accessToken, refreshToken };
-      upsertUser(profile, credentials)
-        .then(user => cb(null, user))
+      console.log("Adding creds passport facebook strategy");
+      //console.log(profile)
+      let credentials;
+      let pageInfoList;
+      //const credentials = { accessToken, refreshToken };
+      // extender USER TOKEN. client id, app id /secret
+      axios.get("https://graph.facebook.com/v7.0/oauth/access_token?" 
+          + "fb_exchange_token=" + accessToken
+          + "&client_id=" + process.env.FACEBOOK_APP_ID
+          + "&client_secret=" + process.env.FACEBOOK_APP_SECRET
+          + "&grant_type=fb_exchange_token")
+        .then( function(response) {
+            //console.log("user token extended")
+            // update the short lived user token for long lived one.
+            //console.log("Short token = ", accessToken);
+            accessToken = response.data.access_token
+            //console.log("Long token = ", accessToken);
+
+            console.log("Requesting for page access token");
+            return axios.get("https://graph.facebook.com/v7.0/" + profile.id + "/accounts"
+                + "?access_token=" + response.data.access_token 
+            )
+          }
+        )
+        .then(function(response) {
+            console.log("response from extended page token to pass to upsert...")
+            //console.log("TOKEN - ", response.data);
+            pageInfoList = response.data;
+            // Update accessToken to long lived token
+            credentials = { accessToken, refreshToken };
+            return Promise.resolve(upsertUser(profile, credentials))
+        })
+        .then(function(user) {
+            console.log("Resolving");
+            return Promise.resolve(upsertPage(profile, user, pageInfoList))
+        })
+        .then(function(user) {
+            console.log("callback");
+            cb(null, user)
+        })
         .catch(err => cb(err));
+
+        
+       //upsertUser(profile, credentials)
+       // .then(user => cb(null, user))
+       // .catch(err => cb(err));
     },
   ),
 );
 
-passport.use(
-  new FacebookTokenStrategy(
-    {
-      clientID: process.env.FACEBOOK_APP_ID,
-      clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: `${origin}/login/facebooktoken/return`,
-      passReqToCallback: true,
-      fbGraphVersion: 'v7.0',
-    },
-    function(accessToken, refreshToken, profile, done) {
-      // alert('accessToken');
-      console.log('Access token strategy - ' + accessToken);
-      return done(null, accessToken);
-    },
-  ),
-);
 
 export default passport;
